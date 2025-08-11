@@ -1,0 +1,222 @@
+[project]
+name = "caseprep-backend"
+version = "0.1.0"
+description = "CasePrep Legal Transcription Platform - Backend API"
+authors = [
+    { name = "CasePrep Team", email = "dev@caseprep.com" }
+]
+readme = "README.md"
+license = { text = "Commercial" }
+requires-python = ">=3.11"
+keywords = [
+    "legal",
+    "transcription", 
+    "fastapi",
+    "ai",
+    "whisper",
+    "privacy"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Legal Industry",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Office/Business :: Legal",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    # Core API Framework
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    
+    # Database & ORM
+    "sqlalchemy>=2.0.23",
+    "alembic>=1.13.0",
+    "psycopg2-binary>=2.9.9",
+    "asyncpg>=0.29.0",
+    
+    # Authentication & Security
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    "cryptography>=41.0.8",
+    
+    # Background Tasks & Caching
+    "celery>=5.3.4",
+    "redis>=5.0.1",
+    "kombu>=5.3.4",
+    
+    # File Processing & Storage
+    "python-magic>=0.4.27",
+    "minio>=7.2.0",
+    "boto3>=1.34.0",
+    
+    # AI/ML & Audio Processing
+    "openai-whisper>=20231117",
+    "faster-whisper>=0.10.0",
+    "torch>=2.1.0",
+    "torchaudio>=2.1.0",
+    "numpy>=1.24.0",
+    "scipy>=1.11.0",
+    
+    # Audio/Video Processing
+    "ffmpeg-python>=0.2.0",
+    "librosa>=0.10.1",
+    "soundfile>=0.12.1",
+    
+    # Document Generation
+    "python-docx>=1.1.0",
+    "reportlab>=4.0.7",
+    "jinja2>=3.1.2",
+    
+    # HTTP Client & Utilities
+    "httpx>=0.25.2",
+    "aiofiles>=23.2.1",
+    "python-slugify>=8.0.1",
+    "email-validator>=2.1.0",
+    
+    # Monitoring & Logging
+    "structlog>=23.2.0",
+    "sentry-sdk[fastapi]>=1.39.0",
+    
+    # Development & Testing (optional)
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-mock>=3.12.0",
+    "factory-boy>=3.3.0",
+    "httpx>=0.25.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Development tools
+    "ruff>=0.1.6",
+    "black>=23.11.0",
+    "mypy>=1.7.1",
+    "pre-commit>=3.6.0",
+    
+    # Testing
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.21.1",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "factory-boy>=3.3.0",
+    
+    # Documentation
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.4.8",
+]
+
+gpu = [
+    # GPU acceleration packages
+    "torch>=2.1.0+cu121",
+    "torchaudio>=2.1.0+cu121",
+    "transformers>=4.36.0",
+    "accelerate>=0.25.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "app/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+# Ruff configuration
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "ARG001", # unused-function-args
+    "SIM118", # key-in-dict
+]
+ignore = [
+    "E501",  # line too long
+    "B008",  # do not perform function calls in argument defaults
+    "W191",  # indentation contains tabs
+    "B904",  # Allow raising exceptions without from e, for HTTPException
+]
+
+[tool.ruff.pyupgrade]
+keep-runtime-typing = true
+
+# Black configuration
+[tool.black]
+target-version = ['py311']
+line-length = 88
+
+# MyPy configuration
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "whisper.*",
+    "faster_whisper.*",
+    "librosa.*",
+    "soundfile.*",
+    "ffmpeg.*",
+    "magic.*",
+    "celery.*",
+]
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "gpu: marks tests that require GPU",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/tests/*",
+    "app/alembic/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
