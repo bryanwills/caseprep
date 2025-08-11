@@ -3,15 +3,14 @@
 export interface User {
   id: string
   email: string
-  displayName: string
+  firstName: string
+  lastName: string
   role: UserRole
   tenantId: string
   createdAt: string
-  lastLoginAt?: string
-  avatar?: string
 }
 
-export type UserRole = 'owner' | 'admin' | 'editor' | 'viewer'
+export type UserRole = 'owner' | 'admin' | 'member' | 'viewer'
 
 export interface Tenant {
   id: string
@@ -24,106 +23,103 @@ export interface Tenant {
 export type SubscriptionPlan = 'starter' | 'professional' | 'enterprise'
 
 export interface TenantSettings {
-  retentionDays: number
-  allowAnonymousLearning: boolean
-  requireTwoFactor: boolean
-  customBranding?: {
-    logo?: string
-    primaryColor?: string
-    secondaryColor?: string
-  }
+  dataRetentionDays: number
+  requireMfa: boolean
+  allowedIpRanges: string[]
+  autoTranscription: boolean
+  defaultLanguage: string
+  transcriptionQuality: 'standard' | 'high' | 'premium'
 }
 
 export interface Matter {
   id: string
-  tenantId: string
   title: string
   description?: string
   caseNumber?: string
   clientName?: string
   status: MatterStatus
+  priority: MatterPriority
+  practiceArea?: string
+  courtName?: string
+  judgeName?: string
+  statuteOfLimitations?: string
+  trialDate?: string
+  discoveryDeadline?: string
   retentionDays: number
   storeMedia: boolean
   storeTranscripts: boolean
-  allowAnonymousLearning: boolean
+  allowAnonLearning: boolean
+  billingRate?: number
+  estimatedValue?: number
+  budgetLimit?: number
+  customFields: Record<string, any>
   createdAt: string
   updatedAt: string
-  transcriptCount: number
-  totalDurationMs: number
 }
 
-export type MatterStatus = 'active' | 'archived' | 'closed'
+export type MatterStatus = 'active' | 'closed' | 'pending' | 'archived'
+export type MatterPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export interface MediaAsset {
   id: string
   matterId: string
   filename: string
-  originalFilename: string
   mimeType: string
-  fileSize: number
-  durationMs?: number
+  byteLength: number
   sha256: string
   storageUri?: string
-  thumbnailUri?: string
+  status: MediaStatus
+  type: MediaType
+  durationMs?: number
+  width?: number
+  height?: number
   createdAt: string
-  uploadedBy: string
 }
+
+export type MediaStatus = 'uploading' | 'processing' | 'ready' | 'failed'
+export type MediaType = 'video' | 'audio' | 'document' | 'image'
 
 export interface Transcript {
   id: string
   matterId: string
-  mediaId: string
-  title: string
+  mediaId?: string
+  title?: string
   language: string
-  status: TranscriptStatus
-  progress: number
   diarizationModel?: string
-  asrModel?: string
+  asrModel: string
   totalDurationMs: number
-  segmentCount: number
-  speakerCount: number
   version: number
   encrypted: boolean
+  segments: TranscriptSegment[]
+  speakerMap: Record<string, string>
+  mediaUrl?: string
   createdAt: string
   updatedAt: string
-  completedAt?: string
-  error?: string
-  
-  // Populated relations
-  media?: MediaAsset
-  matter?: Matter
-  segments?: TranscriptSegment[]
-  speakerMap?: SpeakerAlias[]
 }
-
-export type TranscriptStatus = 
-  | 'pending'
-  | 'processing' 
-  | 'completed'
-  | 'failed'
-  | 'cancelled'
 
 export interface TranscriptSegment {
   id: string
   transcriptId: string
-  speakerLabel: string
+  speaker: string
   startMs: number
   endMs: number
   text: string
-  confidence: number
-  words?: WordTiming[]
-  edited: boolean
+  confidence?: number
+  words?: Word[]
   createdAt: string
 }
 
-export interface WordTiming {
+export interface Word {
   word: string
   startMs: number
   endMs: number
   confidence: number
 }
 
-export interface SpeakerAlias {
+export type TranscriptStatus = 'processing' | 'ready' | 'failed' | 'archived'
+export type TranscriptFormat = 'srt' | 'vtt' | 'docx' | 'pdf' | 'csv' | 'json'
+
+export interface SpeakerRole {
   id: string
   transcriptId: string
   placeholder: string
@@ -131,78 +127,68 @@ export interface SpeakerAlias {
   createdAt: string
 }
 
-export interface TranscriptEdit {
-  id: string
-  transcriptId: string
-  userId: string
-  segmentId: string
-  beforeText: string
-  afterText: string
-  editType: EditType
-  createdAt: string
-}
-
-export type EditType = 'text_correction' | 'speaker_change' | 'timing_adjustment'
-
 export interface UserDictionary {
   id: string
   userId: string
   pattern: string
   replacement: string
-  scope: DictionaryScope
+  scope: 'word' | 'phrase' | 'regex'
   isActive: boolean
-  usageCount: number
   createdAt: string
 }
-
-export type DictionaryScope = 'exact' | 'word' | 'regex'
 
 export interface AuditEvent {
   id: string
   transcriptId: string
-  eventType: AuditEventType
+  eventType: string
   eventPayload: Record<string, any>
   eventTime: string
-  userId?: string
   prevHash?: string
   currHash: string
 }
 
-export type AuditEventType = 
-  | 'upload'
-  | 'process_start'
-  | 'process_complete'
-  | 'edit'
-  | 'export'
-  | 'delete'
-  | 'view'
-
-export interface ExportRequest {
+export interface TranscriptionJob {
   id: string
-  transcriptId: string
-  format: ExportFormat
-  options: ExportOptions
-  status: ExportStatus
-  downloadUrl?: string
+  matterId: string
+  mediaId: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  progress: number
   error?: string
   createdAt: string
-  completedAt?: string
-  expiresAt?: string
+  updatedAt: string
 }
 
-export type ExportFormat = 'srt' | 'vtt' | 'docx' | 'pdf' | 'csv' | 'json'
-
-export type ExportStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'expired'
-
 export interface ExportOptions {
-  includeTimestamps?: boolean
-  includeSpeakers?: boolean
-  includeConfidence?: boolean
-  speakerFormat?: 'label' | 'alias'
-  timestampFormat?: 'ms' | 'seconds' | 'timecode'
-  pageFormat?: 'a4' | 'letter'
-  fontSize?: number
-  includeAuditTrail?: boolean
+  format: TranscriptFormat
+  includeMetadata: boolean
+  includeConfidence: boolean
+  includeSpeakerMapping: boolean
+  includeTimestamps: boolean
+  includeWords: boolean
+}
+
+export interface ClipRequest {
+  transcriptId: string
+  startMs: number
+  endMs: number
+  title?: string
+  description?: string
+  includeVideo: boolean
+  includeAudio: boolean
+  includeTranscript: boolean
+}
+
+export interface Clip {
+  id: string
+  transcriptId: string
+  title: string
+  description?: string
+  startMs: number
+  endMs: number
+  durationMs: number
+  mediaUrl?: string
+  transcriptText: string
+  createdAt: string
 }
 
 // API Response types

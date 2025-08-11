@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -12,18 +9,6 @@ const nextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
-    // Audio file support
-    config.module.rules.push({
-      test: /\.(mp3|wav|ogg|flac)$/,
-      use: {
-        loader: 'file-loader',
-        options: {
-          outputPath: 'static/audio/',
-          publicPath: '/_next/static/audio/',
-        },
-      },
-    });
-
     // Fix for better-auth in browser
     if (!isServer) {
       config.resolve.fallback = {

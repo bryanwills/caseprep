@@ -5,13 +5,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { 
-  Theme, 
-  getStoredTheme, 
-  setStoredTheme, 
-  applyTheme, 
+import {
+  Theme,
+  getStoredTheme,
+  setStoredTheme,
+  applyTheme,
   getEffectiveTheme,
-  watchSystemTheme 
+  watchSystemTheme
 } from '@/lib/theme'
 
 interface UseThemeReturn {
@@ -30,7 +30,7 @@ export function useTheme(): UseThemeReturn {
   useEffect(() => {
     const storedTheme = getStoredTheme()
     const effective = getEffectiveTheme(storedTheme)
-    
+
     setThemeState(storedTheme)
     setEffectiveTheme(effective)
     applyTheme(storedTheme)
@@ -50,7 +50,7 @@ export function useTheme(): UseThemeReturn {
 
   const setTheme = (newTheme: Theme) => {
     const effective = getEffectiveTheme(newTheme)
-    
+
     setThemeState(newTheme)
     setEffectiveTheme(effective)
     setStoredTheme(newTheme)
@@ -61,7 +61,10 @@ export function useTheme(): UseThemeReturn {
     const themeOrder: Theme[] = ['system', 'light', 'dark']
     const currentIndex = themeOrder.indexOf(theme)
     const nextIndex = (currentIndex + 1) % themeOrder.length
-    setTheme(themeOrder[nextIndex])
+    const nextTheme = themeOrder[nextIndex]
+    if (nextTheme) {
+      setTheme(nextTheme)
+    }
   }
 
   const themes = [

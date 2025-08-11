@@ -1,471 +1,351 @@
+"use client"
+
+import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ThemeToggle } from '@/components/common/theme-toggle'
-import { 
-  Shield, 
-  Zap, 
-  FileText, 
-  Users, 
-  Clock, 
+import { motion } from 'framer-motion'
+import {
+  FileText,
+  Users,
+  Shield,
+  Zap,
   CheckCircle,
   ArrowRight,
   Play,
-  Mic,
-  FileAudio,
-  Settings,
+  Upload,
   Download,
-  Eye,
-  Menu
+  Search
 } from 'lucide-react'
 
-export default function HomePage() {
+export default function LandingPage() {
+  const features = [
+    {
+      icon: <FileText className="w-6 h-6" />,
+      title: 'AI-Powered Transcription',
+      description: 'Advanced speech recognition with 99%+ accuracy using state-of-the-art models'
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: 'Speaker Identification',
+      description: 'Automatically identify and label different speakers in your recordings'
+    },
+    {
+      icon: <Shield className="w-6 h-6" />,
+      title: 'Enterprise Security',
+      description: 'Bank-level encryption and compliance with legal data protection standards'
+    },
+    {
+      icon: <Zap className="w-6 h-6" />,
+      title: 'Lightning Fast',
+      description: 'Process hours of audio in minutes with our optimized pipeline'
+    }
+  ]
+
+  const benefits = [
+    'Save 80% of time on manual transcription',
+    'Reduce transcription costs by 60%',
+    'Improve accuracy with AI-powered corrections',
+    'Streamline case preparation workflows',
+    'Export in multiple formats (PDF, Word, SRT)',
+    'Collaborate with team members securely'
+  ]
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container-responsive flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-legal rounded-lg flex items-center justify-center">
-              <FileAudio className="w-5 h-5 text-white" />
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold text-foreground">CasePrep</span>
             </div>
-            <span className="text-xl font-bold">CasePrep</span>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors">
-                Features
-              </Link>
-              <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">
-                Pricing
-              </Link>
-              <Link href="#security" className="text-sm font-medium hover:text-primary transition-colors">
-                Security
-              </Link>
-              <Link href="/auth/sign-in" className="text-sm font-medium hover:text-primary transition-colors">
+
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/auth/sign-in"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Sign In
               </Link>
-              <Button asChild size="sm">
-                <Link href="/auth/sign-up">Start Free Trial</Link>
-              </Button>
-            </nav>
-            
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
-            {/* Mobile Menu Button */}
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
+              <Link
+                href="/auth/sign-up"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                Get Started
+              </Link>
+            </div>
           </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="py-12 md:py-24 lg:py-32">
-          <div className="container-responsive">
-            <div className="mx-auto max-w-4xl text-center">
-              <Badge variant="secondary" className="mb-4">
-                Privacy-First Legal Technology
-              </Badge>
-              
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-balance">
-                Transform Legal{' '}
-                <span className="text-transparent bg-clip-text gradient-legal">
-                  Evidence Processing
-                </span>
-              </h1>
-              
-              <p className="mx-auto max-w-2xl text-muted-foreground text-lg sm:text-xl mt-6 text-balance">
-                Extract and analyze audio/video evidence with AI transcription, speaker diarization, 
-                and secure case preparation workflows. Built for legal professionals who demand 
-                accuracy and privacy.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-                <Button size="lg" asChild className="text-lg px-8">
-                  <Link href="/auth/sign-up">
-                    Start Free Trial
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Link>
-                </Button>
-                
-                <Button size="lg" variant="outline" asChild className="text-lg px-8">
-                  <Link href="#demo">
-                    <Play className="mr-2 w-5 h-5" />
-                    Watch Demo
-                  </Link>
-                </Button>
+      {/* Hero Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-5xl md:text-6xl font-bold text-foreground mb-6"
+          >
+            Legal Transcription
+            <span className="text-primary block">Made Simple</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
+          >
+            Transform audio and video evidence into accurate, searchable transcripts with AI-powered technology.
+            Built specifically for legal professionals who need reliability, security, and speed.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4"
+          >
+            <Link
+              href="/auth/sign-up"
+              className="px-8 py-4 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-lg font-medium flex items-center space-x-2"
+            >
+              <span>Start Free Trial</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+
+            <Link
+              href="/dashboard"
+              className="px-8 py-4 border border-muted-foreground text-foreground rounded-lg hover:bg-muted transition-colors text-lg font-medium flex items-center space-x-2"
+            >
+              <Play className="w-5 h-5" />
+              <span>Watch Demo</span>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Everything You Need for Legal Transcription
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              From court hearings to client interviews, CasePrep handles all your transcription needs with
+              enterprise-grade security and accuracy.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-card p-6 rounded-lg border text-center"
+              >
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 text-primary">
+                  {feature.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              How It Works
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get from audio to transcript in three simple steps
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <Upload className="w-8 h-8 text-primary-foreground" />
               </div>
-              
-              <div className="flex items-center justify-center gap-8 mt-12 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-green-600" />
-                  <span>SOC 2 Compliant</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>HIPAA Ready</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-green-600" />
-                  <span>99.9% Uptime</span>
-                </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">1. Upload Media</h3>
+              <p className="text-muted-foreground">
+                Drag and drop your audio or video files. We support all major formats up to 2GB.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-primary-foreground" />
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section id="features" className="py-12 md:py-24 bg-muted/50">
-          <div className="container-responsive">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Everything You Need for Legal Transcription
-              </h2>
-              <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
-                Professional-grade features designed specifically for legal professionals
+              <h3 className="text-xl font-semibold text-foreground mb-2">2. AI Processing</h3>
+              <p className="text-muted-foreground">
+                Our AI models transcribe, identify speakers, and align words with timestamps.
               </p>
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Core Features */}
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Mic className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>AI Transcription</CardTitle>
-                  <CardDescription>
-                    Faster-Whisper large-v3 for industry-leading accuracy on legal content
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• 95%+ accuracy on clear audio</li>
-                    <li>• Legal terminology optimized</li>
-                    <li>• Real-time processing</li>
-                    <li>• Multiple file formats</li>
-                  </ul>
-                </CardContent>
-              </Card>
+            </motion.div>
 
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Speaker Identification</CardTitle>
-                  <CardDescription>
-                    Automatic speaker diarization with manual refinement capabilities
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• AI-powered speaker detection</li>
-                    <li>• Custom speaker labeling</li>
-                    <li>• Color-coded transcripts</li>
-                    <li>• Timeline synchronization</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <FileText className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Interactive Editor</CardTitle>
-                  <CardDescription>
-                    Real-time transcript editing with media synchronization
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• Click-to-seek playback</li>
-                    <li>• Confidence indicators</li>
-                    <li>• Find & replace tools</li>
-                    <li>• Collaborative editing</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Shield className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Privacy First</CardTitle>
-                  <CardDescription>
-                    Zero storage by default with enterprise-grade security
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• No data stored by default</li>
-                    <li>• End-to-end encryption</li>
-                    <li>• Chain of custody</li>
-                    <li>• HIPAA/SOC 2 compliant</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Download className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Multiple Exports</CardTitle>
-                  <CardDescription>
-                    Professional export formats for every legal workflow
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• PDF Quote Packs</li>
-                    <li>• DOCX & SRT formats</li>
-                    <li>• Embedded audit trails</li>
-                    <li>• Digital signatures</li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="relative overflow-hidden">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Settings className="w-6 h-6 text-primary" />
-                  </div>
-                  <CardTitle>Smart Features</CardTitle>
-                  <CardDescription>
-                    Advanced tools that learn and adapt to your workflow
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>• Custom dictionaries</li>
-                    <li>• Learning corrections</li>
-                    <li>• Smart clipping</li>
-                    <li>• Bulk operations</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section id="pricing" className="py-12 md:py-24">
-          <div className="container-responsive">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Transparent Pricing for Legal Teams
-              </h2>
-              <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
-                Choose the plan that fits your practice. All plans include core features.
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <Download className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">3. Download & Edit</h3>
+              <p className="text-muted-foreground">
+                Get your transcript in multiple formats and edit with our powerful editor.
               </p>
-            </div>
-            
-            <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
-              {/* Starter Plan */}
-              <Card className="relative">
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl">Starter</CardTitle>
-                  <CardDescription>Perfect for solo practitioners</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">$29</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">10 hours of processing/month</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">AI transcription & diarization</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">All export formats</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Email support</span>
-                    </div>
-                  </div>
-                  <Button className="w-full" variant="outline">
-                    Start Free Trial
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Professional Plan */}
-              <Card className="relative border-primary shadow-lg">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge>Most Popular</Badge>
-                </div>
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl">Professional</CardTitle>
-                  <CardDescription>For growing legal teams</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">$99</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">50 hours of processing/month</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Everything in Starter</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Team collaboration</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Priority support</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Custom branding</span>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    Start Free Trial
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Enterprise Plan */}
-              <Card className="relative">
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl">Enterprise</CardTitle>
-                  <CardDescription>For large firms and organizations</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold">$299</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Unlimited processing</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Everything in Professional</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">SSO & advanced security</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Dedicated support</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="text-sm">Custom integrations</span>
-                    </div>
-                  </div>
-                  <Button className="w-full" variant="outline">
-                    Contact Sales
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            </motion.div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Why Legal Professionals Choose CasePrep
+              </h2>
+              <div className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <motion.div
+                    key={benefit}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex items-center space-x-3"
+                  >
+                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-muted-foreground">{benefit}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-card p-8 rounded-lg border"
+            >
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Ready to Get Started?
+              </h3>
+              <p className="text-muted-foreground mb-6">
+                Join thousands of legal professionals who trust CasePrep for their transcription needs.
+              </p>
+              <Link
+                href="/auth/sign-up"
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-center font-medium flex items-center justify-center space-x-2"
+              >
+                <span>Start Your Free Trial</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <p className="text-sm text-muted-foreground text-center mt-3">
+                No credit card required • 14-day free trial
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/50 py-12">
-        <div className="container-responsive">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-legal rounded-lg flex items-center justify-center">
-                  <FileAudio className="w-5 h-5 text-white" />
+      <footer className="border-t py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <FileText className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold">CasePrep</span>
+                <span className="text-xl font-bold text-foreground">CasePrep</span>
               </div>
-              <p className="text-sm text-muted-foreground max-w-xs">
-                Privacy-first legal transcription platform built for modern legal professionals.
+              <p className="text-muted-foreground">
+                Professional legal transcription platform built for the modern legal practice.
               </p>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-semibold">Product</h4>
-              <div className="space-y-2">
-                <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Features
-                </Link>
-                <Link href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Pricing
-                </Link>
-                <Link href="/integrations" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Integrations
-                </Link>
-              </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Product</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">Features</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">API</Link></li>
+              </ul>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-semibold">Company</h4>
-              <div className="space-y-2">
-                <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  About
-                </Link>
-                <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
-                <Link href="/careers" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Careers
-                </Link>
-              </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Company</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">About</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Blog</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Careers</Link></li>
+              </ul>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-semibold">Legal</h4>
-              <div className="space-y-2">
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Terms of Service
-                </Link>
-                <Link href="/security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Security
-                </Link>
-              </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-4">Support</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Link href="#" className="hover:text-foreground transition-colors">Help Center</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Contact</Link></li>
+                <li><Link href="#" className="hover:text-foreground transition-colors">Status</Link></li>
+              </ul>
             </div>
           </div>
-          
-          <div className="border-t pt-8 mt-8 flex flex-col sm:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              © 2024 CasePrep. All rights reserved.
-            </p>
-            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-              <Badge variant="outline" className="text-xs">
-                <Shield className="w-3 h-3 mr-1" />
-                SOC 2 Compliant
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                <Eye className="w-3 h-3 mr-1" />
-                HIPAA Ready
-              </Badge>
-            </div>
+
+          <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
+            <p>&copy; 2024 CasePrep. All rights reserved.</p>
           </div>
         </div>
       </footer>
