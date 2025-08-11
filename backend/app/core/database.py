@@ -5,7 +5,7 @@ Database configuration and session management.
 import contextlib
 from typing import AsyncIterator
 
-from sqlalchemy import MetaData, create_engine, event
+from sqlalchemy import MetaData, create_engine, event, Engine
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
@@ -32,16 +32,10 @@ class DatabaseSessionManager:
     """
     Database session manager for async operations.
     """
-    
-    def __init__(self, host: str, engine_kwargs: dict = {}):
-        self._engine = create_async_engine(host, **engine_kwargs)
-        self._sessionmaker = async_sessionmaker(
-            autocommit=False,
-            autoflush=False,
-            bind=self._engine,
-            class_=AsyncSession,
-            expire_on_commit=False,
-        )
+
+    def __init__(self):
+        self._engine = None
+        self._sessionmaker = None
 
     async def close(self):
         if self._engine is None:
@@ -82,7 +76,7 @@ class DatabaseSessionManager:
     def init(self, host: str, **kwargs):
         """Initialize the database session manager."""
         settings = get_settings()
-        
+
         engine_kwargs = {
             "echo": settings.DEBUG,
             "pool_size": settings.DATABASE_POOL_SIZE,
@@ -91,7 +85,7 @@ class DatabaseSessionManager:
             "pool_recycle": 300,  # 5 minutes
             **kwargs
         }
-        
+
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(
             autocommit=False,
@@ -103,7 +97,7 @@ class DatabaseSessionManager:
 
 
 # Global session manager instance
-sessionmanager = DatabaseSessionManager("")
+sessionmanager = DatabaseSessionManager()
 
 # Synchronous engine for Alembic migrations
 def get_sync_engine():
@@ -130,7 +124,7 @@ async def get_db() -> AsyncIterator[AsyncSession]:
 
 
 # Event listeners for database optimization
-@event.listens_for(create_engine, "connect")
+@event.listens_for(Engine, "connect")
 def set_sqlite_pragma(dbapi_connection, connection_record):
     """Set SQLite pragmas for better performance (if using SQLite)."""
     if 'sqlite' in str(dbapi_connection):

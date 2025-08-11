@@ -35,7 +35,7 @@ class TenantResponse(BaseModel):
     is_active: bool
     features: dict = {}
     settings: dict = {}
-    
+
     class Config:
         from_attributes = True
         use_enum_values = True
@@ -44,8 +44,8 @@ class TenantResponse(BaseModel):
 class TenantUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     logo_url: Optional[str] = Field(None, max_length=500)
-    primary_color: Optional[str] = Field(None, regex=r"^#[0-9a-fA-F]{6}$")
-    secondary_color: Optional[str] = Field(None, regex=r"^#[0-9a-fA-F]{6}$")
+    primary_color: Optional[str] = Field(None, pattern=r"^#[0-9a-fA-F]{6}$")
+    secondary_color: Optional[str] = Field(None, pattern=r"^#[0-9a-fA-F]{6}$")
     custom_domain: Optional[str] = Field(None, max_length=255)
     settings: Optional[dict] = None
 
@@ -56,7 +56,7 @@ class TenantSettings(BaseModel):
     allowed_ip_ranges: Optional[list] = None
     auto_transcription: Optional[bool] = None
     default_language: Optional[str] = Field(None, max_length=10)
-    transcription_quality: Optional[str] = Field(None, regex=r"^(standard|high|premium)$")
+    transcription_quality: Optional[str] = Field(None, pattern=r"^(standard|high|premium)$")
 
 
 @router.get("/me", response_model=TenantResponse)
@@ -68,13 +68,13 @@ async def get_current_tenant(
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     return TenantResponse.from_orm(tenant)
 
 
@@ -91,18 +91,18 @@ async def update_current_tenant(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only tenant owners can update tenant information"
         )
-    
+
     # Get tenant
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     # Update fields
     update_data = tenant_data.dict(exclude_unset=True)
     for field, value in update_data.items():
@@ -113,10 +113,10 @@ async def update_current_tenant(
             if tenant.settings is None:
                 tenant.settings = {}
             tenant.settings.update(value)
-    
+
     await db.commit()
     await db.refresh(tenant)
-    
+
     return TenantResponse.from_orm(tenant)
 
 
@@ -133,28 +133,28 @@ async def update_tenant_settings(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Insufficient permissions to update tenant settings"
         )
-    
+
     # Get tenant
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     # Update settings
     settings_dict = settings_data.dict(exclude_unset=True)
-    
+
     if tenant.settings is None:
         tenant.settings = {}
-    
+
     # Update individual settings and apply to tenant fields where applicable
     for key, value in settings_dict.items():
         tenant.settings[key] = value
-        
+
         # Apply certain settings directly to tenant fields
         if key == "data_retention_days":
             tenant.data_retention_days = value
@@ -162,9 +162,9 @@ async def update_tenant_settings(
             tenant.require_mfa = value
         elif key == "allowed_ip_ranges":
             tenant.allowed_ip_ranges = value
-    
+
     await db.commit()
-    
+
     return {"message": "Tenant settings updated successfully", "settings": tenant.settings}
 
 
@@ -178,13 +178,13 @@ async def get_tenant_usage(
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     # Count current users
     from sqlalchemy import func
     user_count_query = select(func.count(User.id)).where(
@@ -193,7 +193,7 @@ async def get_tenant_usage(
     )
     user_count_result = await db.execute(user_count_query)
     current_users = user_count_result.scalar()
-    
+
     # Get storage and transcription usage from matters
     from app.models.matter import Matter
     usage_query = select(
@@ -201,13 +201,13 @@ async def get_tenant_usage(
         func.sum(Matter.total_duration_ms).label("total_duration_ms"),
         func.count(Matter.id).label("total_matters")
     ).where(Matter.tenant_id == current_user.tenant_id)
-    
+
     usage_result = await db.execute(usage_query)
     usage = usage_result.first()
-    
+
     total_storage_gb = (usage.total_storage_bytes or 0) / (1024 * 1024 * 1024)
     total_transcription_hours = (usage.total_duration_ms or 0) / (1000 * 60 * 60)
-    
+
     return {
         "plan": tenant.plan.value,
         "subscription_status": tenant.subscription_status,
@@ -249,21 +249,21 @@ async def enable_feature(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only tenant owners can manage features"
         )
-    
+
     # Get tenant
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     tenant.enable_feature(feature)
     await db.commit()
-    
+
     return {"message": f"Feature '{feature}' enabled successfully"}
 
 
@@ -280,19 +280,19 @@ async def disable_feature(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only tenant owners can manage features"
         )
-    
+
     # Get tenant
     query = select(Tenant).where(Tenant.id == current_user.tenant_id)
     result = await db.execute(query)
     tenant = result.scalar_one_or_none()
-    
+
     if not tenant:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tenant not found"
         )
-    
+
     tenant.disable_feature(feature)
     await db.commit()
-    
+
     return {"message": f"Feature '{feature}' disabled successfully"}

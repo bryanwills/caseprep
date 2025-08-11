@@ -40,24 +40,24 @@ class UserCreate(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
     firm_name: str = Field(..., min_length=1, max_length=255)
-    
+
     @validator('password')
     def validate_password(cls, v):
         """Validate password strength."""
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
-        
+
         # Check for at least one digit
         if not any(char.isdigit() for char in v):
             raise ValueError('Password must contain at least one digit')
-        
+
         # Check for at least one special character
         special_chars = "!@#$%^&*()_+-=[]{}|;:,.<>?"
         if not any(char in special_chars for char in v):
             raise ValueError('Password must contain at least one special character')
-        
+
         return v
-    
+
     @validator('firm_name')
     def validate_firm_name(cls, v):
         """Validate firm name."""
@@ -83,7 +83,7 @@ class UserResponse(BaseModel):
     preferences: dict = {}
     timezone: str = "UTC"
     language: str = "en"
-    
+
     class Config:
         from_attributes = True
         use_enum_values = True
@@ -108,20 +108,20 @@ class PasswordResetConfirm(BaseModel):
     """Password reset confirmation schema."""
     token: str
     new_password: str = Field(..., min_length=8)
-    
+
     @validator('new_password')
     def validate_password(cls, v):
         """Validate password strength."""
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
-        
+
         if not any(char.isdigit() for char in v):
             raise ValueError('Password must contain at least one digit')
-        
+
         special_chars = "!@#$%^&*()_+-=[]{}|;:,.<>?"
         if not any(char in special_chars for char in v):
             raise ValueError('Password must contain at least one special character')
-        
+
         return v
 
 
@@ -129,20 +129,20 @@ class PasswordChange(BaseModel):
     """Password change request schema."""
     current_password: str
     new_password: str = Field(..., min_length=8)
-    
+
     @validator('new_password')
     def validate_password(cls, v):
         """Validate password strength."""
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
-        
+
         if not any(char.isdigit() for char in v):
             raise ValueError('Password must contain at least one digit')
-        
+
         special_chars = "!@#$%^&*()_+-=[]{}|;:,.<>?"
         if not any(char in special_chars for char in v):
             raise ValueError('Password must contain at least one special character')
-        
+
         return v
 
 
@@ -169,7 +169,7 @@ class TenantResponse(BaseModel):
     created_at: datetime
     features: dict = {}
     settings: dict = {}
-    
+
     class Config:
         from_attributes = True
         use_enum_values = True
@@ -177,7 +177,7 @@ class TenantResponse(BaseModel):
 
 class OAuthProvider(BaseModel):
     """OAuth provider configuration."""
-    provider: str = Field(..., regex="^(google|github|facebook)$")
+    provider: str = Field(..., pattern="^(google|github|facebook)$")
     client_id: str
     redirect_uri: str
     state: Optional[str] = None
@@ -199,7 +199,7 @@ class MFASetup(BaseModel):
 
 class MFAVerify(BaseModel):
     """MFA verification request."""
-    token: str = Field(..., regex="^[0-9]{6}$")
+    token: str = Field(..., pattern="^[0-9]{6}$")
 
 
 class MFABackupCode(BaseModel):
